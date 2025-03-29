@@ -8,11 +8,11 @@ sqlite_url = f"sqlite:///{sqlite_file_name}"
 engine = create_engine(sqlite_url, echo=True)
 
 
-def create_db_and_tables():
+async def create_db_and_tables():
     SQLModel.metadata.create_all(engine)
 
 
-def get_url_by_short_id(url_short_id: str):
+async def get_url_by_short_id(url_short_id: str):
     with Session(engine) as session:
         statement = select(ShortUrlApi).where(ShortUrlApi.id == url_short_id)
         result = session.exec(statement)
@@ -20,7 +20,18 @@ def get_url_by_short_id(url_short_id: str):
         return response
 
 
-def check_short_url_id(url_short_id: str):
+async def get_all():
+    with Session(engine) as session:
+        statement = select(ShortUrlApi)
+        result = session.exec(statement)
+        response = []
+        for item in result:
+            response.append(item)
+
+        return response
+
+
+async def check_short_url_id(url_short_id: str):
     with Session(engine) as session:
         statement = select(ShortUrlApi).where(ShortUrlApi.id == url_short_id)
         result = session.exec(statement)
@@ -28,7 +39,7 @@ def check_short_url_id(url_short_id: str):
         return True if response else False
 
 
-def get_url_by_full_url(str_url: str):
+async def get_url_by_full_url(str_url: str):
     with Session(engine) as session:
         statement = select(ShortUrlApi).where(ShortUrlApi.url == str_url)
         result = session.exec(statement)
@@ -36,9 +47,9 @@ def get_url_by_full_url(str_url: str):
         return response
 
 
-def generate_short_url_id():
+async def generate_short_url_id():
     short_id = str(uuid.uuid4())[:10]
-    is_exist = check_short_url_id(short_id)
+    is_exist = await check_short_url_id(short_id)
 
     if is_exist:
         generate_short_url_id()
@@ -46,15 +57,15 @@ def generate_short_url_id():
         return short_id
 
 
-def create_url(str_url: str):
-    url = get_url_by_full_url(str_url)
+async def create_url(str_url: str):
+    url = await get_url_by_full_url(str_url)
     if url:
         return {
             "message": "This URL adress already exist!",
             "url": url 
         }
     else:
-        new_short_url_id = generate_short_url_id()
+        new_short_url_id = await generate_short_url_id()
         with Session(engine) as session:
             new_url_pair = ShortUrlApi(id = new_short_url_id, url = str_url)
             session.add(new_url_pair)
