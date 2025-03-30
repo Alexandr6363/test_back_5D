@@ -52,7 +52,7 @@ async def generate_short_url_id():
     is_exist = await check_short_url_id(short_id)
 
     if is_exist:
-        generate_short_url_id()
+        await generate_short_url_id()
     else:
         return short_id
 
