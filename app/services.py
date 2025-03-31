@@ -1,5 +1,5 @@
 from sqlmodel import SQLModel, create_engine, Session, select
-from schemas import ShortUrlApi
+from .schemas import ShortUrlApi
 import uuid
 
 sqlite_file_name = "url_short.db"
@@ -8,7 +8,7 @@ sqlite_url = f"sqlite:///{sqlite_file_name}"
 engine = create_engine(sqlite_url, echo=True)
 
 
-async def create_db_and_tables():
+def create_db_and_tables():
     SQLModel.metadata.create_all(engine)
 
 
