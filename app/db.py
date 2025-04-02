@@ -1,13 +1,19 @@
-from sqlmodel import SQLModel, create_engine
+from sqlalchemy import create_engine
+from sqlalchemy.ext.asyncio import create_async_engine
+from sqlmodel import SQLModel
 
 sqlite_file_name = "url_short.db"
-sqlite_url = f"sqlite:///{sqlite_file_name}"
 
-engine = create_engine(sqlite_url, echo=True)
+sync_engine = create_engine(f"sqlite:///{sqlite_file_name}")
+
+async_engine = create_async_engine(f"sqlite+aiosqlite:///{sqlite_file_name}")
 
 
 def create_db_and_tables():
-    SQLModel.metadata.create_all(engine)
+    SQLModel.metadata.create_all(sync_engine)
+
+
+
 
 
 

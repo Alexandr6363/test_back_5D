@@ -1,42 +1,42 @@
-from sqlmodel import Session, select
+from sqlmodel import select
 from .schemas import ShortUrlApi
 import uuid
-from .db import engine
+from .db import async_engine as engine
+from sqlalchemy.ext.asyncio import AsyncSession
+
+
 
 
 
 async def get_url_by_short_id(url_short_id: str):
-    with Session(engine) as session:
+    async with AsyncSession(engine) as session:
         statement = select(ShortUrlApi).where(ShortUrlApi.id == url_short_id)
-        result = session.exec(statement)
-        response = result.one_or_none()
+        result = await session.execute(statement)
+        response = result.scalar_one_or_none()
         return response
 
 
 async def get_all_url():
-    with Session(engine) as session:
+    async with AsyncSession(engine) as session:
         statement = select(ShortUrlApi)
-        result = session.exec(statement)
-        response = []
-        for item in result:
-            response.append(item)
-
+        result = await session.execute(statement)
+        response = result.scalars().all()
         return response
 
 
 async def check_short_url_id(url_short_id: str):
-    with Session(engine) as session:
+    async with AsyncSession(engine) as session:
         statement = select(ShortUrlApi).where(ShortUrlApi.id == url_short_id)
-        result = session.exec(statement)
-        response = result.one_or_none()
+        result = await session.execute(statement)
+        response = result.scalar_one_or_none()
         return True if response else False
 
 
 async def get_url_by_full_url(str_url: str):
-    with Session(engine) as session:
+    async with AsyncSession(engine) as session:
         statement = select(ShortUrlApi).where(ShortUrlApi.url == str_url)
-        result = session.exec(statement)
-        response = result.one_or_none()
+        result = await session.execute(statement)
+        response = result.scalar_one_or_none()
         return response
 
 
@@ -45,7 +45,7 @@ async def generate_short_url_id():
     is_exist = await check_short_url_id(short_id)
 
     if is_exist:
-        await generate_short_url_id()
+        return await generate_short_url_id()
     else:
         return short_id
 
@@ -59,11 +59,11 @@ async def create_url(str_url: str):
         }
     else:
         new_short_url_id = await generate_short_url_id()
-        with Session(engine) as session:
+        async with AsyncSession(engine) as session:
             new_url_pair = ShortUrlApi(id = new_short_url_id, url = str_url)
             session.add(new_url_pair)
-            session.commit()
-            session.refresh(new_url_pair)
+            await session.commit()
+            await session.refresh(new_url_pair)
             return new_url_pair 
 
         
