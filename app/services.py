@@ -5,9 +5,6 @@ from .db import async_engine as engine
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
-
-
-
 async def get_url_by_short_id(url_short_id: str):
     async with AsyncSession(engine) as session:
         statement = select(ShortUrlApi).where(ShortUrlApi.id == url_short_id)

@@ -2,6 +2,7 @@ from fastapi import APIRouter
 from .services import create_url, get_all_url, get_url_by_short_id
 from fastapi.responses import RedirectResponse
 
+
 router = APIRouter(
    prefix="",
    tags=["Short url"],
