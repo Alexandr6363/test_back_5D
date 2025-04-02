@@ -36,5 +36,5 @@ sudo ufw allow 8080
 
 docker-compose up --build
 
-## The server is running at:: http://127.0.0.1:8080/
+## The server is running at: http://127.0.0.1:8080/
 ## Interactive mode: http://127.0.0.1:8080/docs#
