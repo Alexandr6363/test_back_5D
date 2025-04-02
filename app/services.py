@@ -48,6 +48,7 @@ async def generate_short_url_id():
 
 
 async def create_url(str_url: str):
+    str_url = check_full_url(str_url)
     url = await get_url_by_full_url(str_url)
     if url:
         return {
@@ -62,6 +63,13 @@ async def create_url(str_url: str):
             await session.commit()
             await session.refresh(new_url_pair)
             return new_url_pair 
+        
+
+def check_full_url(url):
+    if url.startswith("https://") or url.startswith("http://"):
+        return url
+    else:
+        return f"https://{url}"
 
         
  
