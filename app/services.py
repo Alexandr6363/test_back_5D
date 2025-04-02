@@ -1,15 +1,8 @@
-from sqlmodel import SQLModel, create_engine, Session, select
+from sqlmodel import Session, select
 from .schemas import ShortUrlApi
 import uuid
+from .db import engine
 
-sqlite_file_name = "url_short.db"
-sqlite_url = f"sqlite:///{sqlite_file_name}"
-
-engine = create_engine(sqlite_url, echo=True)
-
-
-def create_db_and_tables():
-    SQLModel.metadata.create_all(engine)
 
 
 async def get_url_by_short_id(url_short_id: str):
@@ -20,7 +13,7 @@ async def get_url_by_short_id(url_short_id: str):
         return response
 
 
-async def get_all():
+async def get_all_url():
     with Session(engine) as session:
         statement = select(ShortUrlApi)
         result = session.exec(statement)
@@ -48,7 +41,7 @@ async def get_url_by_full_url(str_url: str):
 
 
 async def generate_short_url_id():
-    short_id = str(uuid.uuid4())[:10]
+    short_id = str(uuid.uuid4())[:5]
     is_exist = await check_short_url_id(short_id)
 
     if is_exist:
