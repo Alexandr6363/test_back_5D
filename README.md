@@ -20,11 +20,11 @@ POST http://127.0.0.1:8080?str_url=https://example.com
 
 Getting the list of URLs:
 
-GET http://127.0.0.1:8080/urls_list"
+GET http://127.0.0.1:8080/urls_list
 
 Redirecting:
 
-GET http://127.0.0.1:8080/?short_id=abcde"
+GET http://127.0.0.1:8080/?short_id=abcde
 
 ## Install and run:
 
